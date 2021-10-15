@@ -1,0 +1,26 @@
+<div class="modal modal-md active">
+  <a href="#close" class="modal-overlay" aria-label="Close"></a>
+  <div class="modal-container createItemModal text-center text-bold">
+    <!-- modal structure here -->
+    <div class="createItemTitle bg-primary">Create category for restaurant:</div>
+    <form class="form-horizontal createItemForm"  method="POST" action="/add-category">
+        <div class="form-group">
+            <div class="col-3 col-sm-12">
+                <label class="form-label createItemLabel" for="categoryName">Name of category: </label>
+            </div>
+            <div class="col-9 col-sm-12">
+                <input class="form-input" type="text" id="categoryName" name="categoryName" placeholder="category name">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-3 col-sm-12">
+                <label class="form-label createItemLabel" for="categoryDesc">Category description: </label>
+            </div>
+            <div class="col-9 col-sm-12">
+                <input class="form-input" type="text" id="itemDesc" name="categoryDesc" placeholder="category description">
+            </div>
+        </div>
+        <input type="submit" id="createItem" value="Create item" class="createItemBtn btn btn-primary">
+    </form>
+  </div>
+</div>

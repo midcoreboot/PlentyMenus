@@ -1,0 +1,35 @@
+<!--
+<div class="container">
+    <form method="get" action="/">
+    Restaurant Name: <input name="rName"></input>
+    Restaurant Description: <input name="rDesc"></input>
+    Add Category: <input name="cName"></input>
+    <input name="desc"></input>
+    <button type="submit" formaction="/create/add_Category"></button>
+    <button type="submit" formaction="/create/add_item"></button>
+    <button type="submit" formaction="/create/remove_item"></button>
+    <button type="submit" formaction="/create/remove_Category"></button>
+    <button type="submit" formaction="/create/abort"></button>
+    </form>
+</div> -->
+
+
+<div class="formContainer bg-dark">
+    <form class="form-horizontal" method="POST" action="/created">
+        <div class="form-group">
+            <div class="col-6 col-sm-12">
+                <label class="form-label" for="rName">Restaurant Name:</label>
+            </div>
+            <div class="col-6 col-sm-12">
+                <input type="text" id="rName" name="rName" placeholder="name:">
+            </div>
+            <div class="col-6 col-sm-12">
+                <label class="form-label" for="rDesc">Restaurant Description: </label>
+            </div>
+            <div class="col-6 col-sm-12">
+                <input type="text" id="rDesc" name="rDesc" placeholder="description:">
+            </div>
+        </div>
+        <input type="submit" class="btn btn-primary createBtn" value="Submit Restaurant"></input>
+    </form>
+</div>

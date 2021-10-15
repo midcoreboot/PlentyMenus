@@ -1,0 +1,41 @@
+<!--
+<form method="POST" action="/createitem">
+    <input type="text" name="itemName">
+    <input type="text" name="itemDesc">
+    <input type="text" name="itemPrice">
+    <input type="submit">
+</form> -->
+<div class="modal modal-md active">
+  <a href="#close" class="modal-overlay" aria-label="Close"></a>
+  <div class="modal-container createItemModal text-center text-bold">
+    <!-- modal structure here -->
+    <div class="createItemTitle bg-primary">Create Item for category:</div>
+    <form class="form-horizontal createItemForm"  method="POST" action="/createitem">
+        <div class="form-group">
+            <div class="col-3 col-sm-12">
+                <label class="form-label createItemLabel" for="itemName">Name of food item: </label>
+            </div>
+            <div class="col-9 col-sm-12">
+                <input class="form-input" type="text" id="itemName" name="itemName" placeholder="Item name">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-3 col-sm-12">
+                <label class="form-label createItemLabel" for="itemDesc">Item Description: </label>
+            </div>
+            <div class="col-9 col-sm-12">
+                <input class="form-input" type="text" id="itemDesc" name="itemDesc" placeholder="Item desc">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-3 col-sm-12">
+                <label class="form-label createItemLabel" for="itemPrice">Price of food item: </label>
+            </div>
+            <div class="col-9 col-sm-12">
+                <input class="form-input" type="text" id="itemPrice" name="itemPrice" placeholder="Price">
+            </div>
+        </div>
+        <input type="submit" id="createItem" value="Create item" class="createItemBtn btn btn-primary">
+    </form>
+  </div>
+</div>
