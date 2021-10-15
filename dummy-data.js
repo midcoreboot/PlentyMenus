@@ -3,31 +3,36 @@ exports.restaurants = [
         id: 1,
         name: "McDonalds",
         desc: "Fast-food burger joint.",
-        rating: 67
+        rating: 67,
+        isVisible: true
     },
     {
         id: 2,
         name: "Burger King",
         desc: "Providing quality customer satisfaction since 1953",
-        rating: 54
+        rating: 54,
+        isVisible: true
     },
     {
         id: 3,
         name: "Alcamo Pizza",
         desc: "Best pizza in town, order from us if you like real meals.",
-        rating: 64
+        rating: 64,
+        isVisible: true
     },
     {
         id: 4,
         name: "Icha-Mochi",
         desc: "Sushi made the traditional way with real ingredients",
-        rating: 79
+        rating: 79,
+        isVisible: true
     },
     {
         id: 5,
         name: "Saffran",
         desc: "Middle-eastern food with strong flavours",
-        rating: 89
+        rating: 89,
+        isVisible: true
     }
 ]
 

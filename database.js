@@ -1,10 +1,93 @@
 const connectSqlite3 = require('connect-sqlite3');
 const sqlite = require('sqlite3').verbose();
-const db = new sqlite.Database('database.db')
+const fs = require('fs')
+const dummyData = require('./dummy-data.js')
+const bcrypt = require('bcrypt')
+//const db = new sqlite.Database('database.db')
+
+const path = 'database.db'
+var initDB = false;
+
+fs.access(path, fs.F_OK, (err) => {
+    if(err){
+        console.log("Database doesn't exist. Creating tables and filling them...");
+        initDB = true;
+    }
+})
+
+const db = new sqlite.Database('database.db', (error) => {
+    if(error != null){
+        //database doesnt exist
+        console.log(error.message)
+    } else {
+        console.log("Connected to current database without issue.")
+        if(initDB == true){
+            initDB = false;
+            //CREATE TABLES
+            console.log("initdb");
+            db.get("PRAGMA foreign_keys = ON")
+            createTables();
+        } else {
+            db.get("PRAGMA foreign_keys = ON")
+        }
+    }
+})
+
+function createTables(){
+    const sql0 = "PRAGMA foreign_keys = ON";
+    const sql1 = "CREATE TABLE IF NOT EXISTS restaurants (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, desc TEXT, rating INTEGER, isVisible BOOLEAN NOT NULL CHECK (isVisible IN (0,1)))";
+    const sql2 = "CREATE TABLE IF NOT EXISTS categories (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, desc TEXT, restaurantId INTEGER, FOREIGN KEY(restaurantId) REFERENCES restaurants(id))";
+    const sql3 = "CREATE TABLE IF NOT EXISTS items (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, desc TEXT, price INTEGER, categoryId, FOREIGN KEY(categoryId) REFERENCES categories(id))";
+    const sql4 = "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL UNIQUE, fullname TEXT, hash TEXT, accessLevel INTEGER DEFAULT 0)"
+    db.serialize(function() {
+        db.run(sql1)
+        db.run(sql2)
+        db.run(sql3)
+        db.run(sql4)
+        
+        const sql = "INSERT INTO restaurants(name, desc, rating, isVisible) VALUES (?, ?, ?, ?)";
+        for(var i = 0; i < dummyData.restaurants.length; i+=1){
+            var bool;
+            if(dummyData.restaurants[i].isVisible == true){
+                bool = 1;
+            } else {
+                bool = 0;
+            }
+            db.run(sql, [dummyData.restaurants[i].name, dummyData.restaurants[i].desc, dummyData.restaurants[i].rating, bool]);
+        }
+        console.log("Restaurants table populated without issue...")
+        const sql5 = "INSERT INTO categories(name, desc, restaurantId) VALUES (?, ?, ?)";
+        for(var i = 0; i < dummyData.categories.length; i+=1){
+            db.run(sql5, [dummyData.categories[i].name, dummyData.categories[i].desc, dummyData.categories[i].rId]);
+        }
+        console.log("Categories table populated without issue...")
+        const sql6 = "INSERT INTO items(name, desc, price, categoryId) VALUES (?, ?, ?, ?)";
+        for(var i = 0; i < dummyData.items.length; i+=1){
+            db.run(sql6, [dummyData.items[i].name, dummyData.items[i].desc, dummyData.items[i].price, dummyData.items[i].cId]);
+        }
+        console.log("Items table populated without issue...")
+        bcrypt.hash('adminpass', 10, function(err, hash) {
+            if(err) {
+                //SEND ERROR
+            } else {
+                console.log(hash);
+                const sql7 = "INSERT INTO users(username, fullname, hash, accessLevel) VALUES (?, ?, ?, ?)";
+                db.run(sql7, ['midcoreboot', 'Rasmus Kolmodin', hash, 5]);
+            }
+        })
+    })
+}
 
 /* SQL FUNCTIONS */
 
-/* FETCHING */
+exports.getUserByUsername = function(username, callback){
+    const query = 'SELECT * FROM users WHERE username = ?'
+    db.get(query, [username], function(error, result) {
+        callback(error, result)
+    })
+}
+
+/* RESTAURANTS */
 function fetchAll(id, callback){
     const query = 
     'SELECT r.name as rName, r.desc as rDesc, c.name as cName, c.desc as cDesc, i.name as itemName, i.desc as itemDesc FROM restaurants as r INNER JOIN categories as c ON r.id = c.restaurantId INNER JOIN items as i ON c.id = i.categoryId WHERE r.id = ?';
@@ -164,51 +247,3 @@ exports.fetchItemsById = function(categoryId, callback) {
         callback(error, items)
     })
 }
-
-/*
-
-exports.getRestaurants(){
-    let db = new sqlite.Database('database.db')
-    return new Promise((resolve,reject) => {
-        const sql = "SELECT * FROM restaurants ORDER BY id LIMIT 10"
-        db.all(sql, function(error,rows) {
-            if(error){
-                reject(error)
-            } else {
-                resolve(rows);
-            }
-        })
-    }).then(function(res){
-        db.close()
-    })
-}
-exports.getCategoriesById(id) {
-    let db = new sqlite.Database('database.db')
-    return new Promise(function(resolve, reject) {
-        const sql = "SELECT * FROM categories WHERE restaurantId = ?"
-        db.all(sql,[id], function(error,rows){
-            if(error){
-                reject(error)
-            } else {
-                resolve(rows)
-            }
-        })
-    }).then(function(err) {
-        db.close()
-    })
-}
-exports.getItemsById(cId) {
-    let db = new sqlite.Database('database.db')
-    return new Promise(function(resolve, reject) {
-        const sql = "SELECT * FROM items WHERE categoryId = ?"
-        db.all(sql, [cId], function(error,rows) {
-            if(error){
-                reject(error)
-            } else {
-                resolve(rows)
-            }
-        })
-    }).then(function(err) {
-        db.close()
-    })
-} */

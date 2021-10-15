@@ -4,16 +4,15 @@ const session = require('express-session')
 const sqlite3 = require('sqlite3')
 const connectSqlite3 = require('connect-sqlite3')
 const SQLiteStore = connectSqlite3(session)
-const fs = require('fs')
 const dummyData = require('./dummy-data.js')
 const db = require('./database.js')
+const authRouter = require('./routers/auth-router')
 const { rawListeners, allowedNodeEnvironmentFlags } = require('process')
 const { Console } = require('console')
 const { resolve } = require('path')
 
 const app = express()
-//const path = 'database.db'
-var initDB = false;
+
 
 app.use(express.static('public'))
 app.use(express.urlencoded({
@@ -30,42 +29,6 @@ app.use(function(request, response, next) {
     response.locals.session = request.session
     next()
 })
-
-
-/*
-fs.access(path, fs.F_OK, (err) => {
-    if(err){
-        console.log("Database doesn't exist. Creating tables and filling them...");
-        initDB = true;
-    }
-}) */
-
-//const path = '/database.db'
-
-
-
-///        MOOOOOOOOOOOVE SQL TO DATABASE.js
-
-
-
-/*
-const db = new sqlite3.Database('database.db', (error) => {
-    if(error != null){
-        //database doesnt exist
-        console.log(error.message)
-    } else {
-        console.log("Connected to current database without issue.")
-        if(initDB == true){
-            initDB = false;
-            //CREATE TABLES
-            console.log("initdb");
-            db.get("PRAGMA foreign_keys = ON")
-            createTables();
-        } else {
-            db.get("PRAGMA foreign_keys = ON")
-        }
-    }
-})  */
 
 const hbs = expressHandlebars.create({
     helpers: {
@@ -88,6 +51,7 @@ const hbs = expressHandlebars.create({
 
 app.engine("hbs", hbs.engine)
 
+app.use('/auth', authRouter)
 
 app.get('/', function(request, response){ 
     let restArray = []
@@ -822,33 +786,7 @@ function getItems(categoryId){
 }
 
 
-function createTables(){
-    const sql0 = "PRAGMA foreign_keys = ON";
-    const sql1 = "CREATE TABLE IF NOT EXISTS restaurants (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, desc TEXT, rating INTEGER)";
-    const sql2 = "CREATE TABLE IF NOT EXISTS categories (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, desc TEXT, restaurantId INTEGER, FOREIGN KEY(restaurantId) REFERENCES restaurants(id))";
-    const sql3 = "CREATE TABLE IF NOT EXISTS items (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, desc TEXT, price INTEGER, categoryId, FOREIGN KEY(categoryId) REFERENCES categories(id))";
-    db.serialize(function() {
-        db.run(sql1)
-        db.run(sql2)
-        db.run(sql3)
-        
-        const sql4 = "INSERT INTO restaurants(name, desc, rating) VALUES (?, ?, ?)";
-        for(var i = 0; i < dummyData.restaurants.length; i+=1){
-            db.run(sql4, [dummyData.restaurants[i].name, dummyData.restaurants[i].desc, dummyData.restaurants[i].rating]);
-        }
-        console.log("Restaurants table populated without issue...")
-        const sql5 = "INSERT INTO categories(name, desc, restaurantId) VALUES (?, ?, ?)";
-        for(var i = 0; i < dummyData.categories.length; i+=1){
-            db.run(sql5, [dummyData.categories[i].name, dummyData.categories[i].desc, dummyData.categories[i].rId]);
-        }
-        console.log("Categories table populated without issue...")
-        const sql6 = "INSERT INTO items(name, desc, price, categoryId) VALUES (?, ?, ?, ?)";
-        for(var i = 0; i < dummyData.items.length; i+=1){
-            db.run(sql6, [dummyData.items[i].name, dummyData.items[i].desc, dummyData.items[i].price, dummyData.items[i].cId]);
-        } 
-        console.log("Items table populated without issue...")
-    })
-}
+
 
 
  */
