@@ -1,3 +1,11 @@
+{{#if errors.length}}
+    {{#each errors}}
+        <div class="toast toast-dark mb-1">
+            {{this}}
+        </div>
+    {{/each}}
+{{/if}}
+
 <h1>Login</h1>
 <form action="/auth/register" method="post">
 	

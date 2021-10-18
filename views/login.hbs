@@ -1,3 +1,5 @@
+<!-- REDO -->
+
 <h1>Login</h1>
 <form action="/auth/login" method="post">
 	
@@ -9,6 +11,7 @@
 		Password: <input type="password" name="password">
 	</div>
 	
+	<input type="hidden" name="referer" value={{referer}}>
 	<input type="submit" value="Login!">
 	
 </form>

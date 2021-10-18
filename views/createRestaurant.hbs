@@ -1,5 +1,5 @@
 <div class="modal modal-md active">
-  <a href="/menu/edit/{{rId}}" class="modal-overlay" aria-label="Close"></a>
+  <a href="/" class="modal-overlay" aria-label="Close"></a>
   <div class="modal-container createItemModal text-center text-bold">
     <!-- modal structure here -->
     {{#if errors}}
@@ -9,25 +9,27 @@
             </div>
         {{/each}}
     {{/if}}
-    <div class="createItemTitle bg-primary">Create a category: </div>
-    <form class="form-horizontal createItemForm"  method="POST" action="/menu/{{rId}}/create/category/">
+    <div class="createItemTitle bg-primary">Create restaurant: </div>
+        <form class="form-horizontal createItemForm"  method="POST" action="/menu/create/restaurant">
         <div class="form-group">
             <div class="col-3 col-sm-12">
-                <label class="form-label createItemLabel" for="categoryName">Name of category: </label>
+                <label class="form-label createItemLabel" for="rName">Name of Restaurant: </label>
             </div>
             <div class="col-9 col-sm-12">
-                <input class="form-input" type="text" id="categoryName" name="categoryName" placeholder="category name">
+                <input class="form-input" type="text" id="rName" name="rName" placeholder="restaurant name">
             </div>
         </div>
         <div class="form-group">
             <div class="col-3 col-sm-12">
-                <label class="form-label createItemLabel" for="categoryDesc">Category description: </label>
+                <label class="form-label createItemLabel" for="rDesc">Restaurant description: </label>
             </div>
             <div class="col-9 col-sm-12">
-                <input class="form-input" type="text" id="categoryDesc" name="categoryDesc" placeholder="category description">
+                <input class="form-input" type="text" id="rDesc" name="rDesc" placeholder="restaurant description">
             </div>
         </div>
         <input type="submit" id="" value="Submit edit!" class="createItemBtn btn btn-primary">
-    </form>
+        </form>
+
+
     </div>
 </div>

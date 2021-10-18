@@ -9,8 +9,8 @@
             </div>
         {{/each}}
     {{/if}}
-    <div class="createItemTitle bg-primary">Create a category: </div>
-    <form class="form-horizontal createItemForm"  method="POST" action="/menu/{{rId}}/create/category/">
+    <div class="createItemTitle bg-primary">Edit the category: </div>
+    <form class="form-horizontal createItemForm"  method="POST" action="/menu/edit/{{rId}}/category/{{id}}">
         <div class="form-group">
             <div class="col-3 col-sm-12">
                 <label class="form-label createItemLabel" for="categoryName">Name of category: </label>

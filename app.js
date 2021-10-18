@@ -1,15 +1,16 @@
-const express = require('express')
-const expressHandlebars = require('express-handlebars')
-const session = require('express-session')
-const sqlite3 = require('sqlite3')
-const connectSqlite3 = require('connect-sqlite3')
-const SQLiteStore = connectSqlite3(session)
-const dummyData = require('./dummy-data.js')
-const db = require('./database.js')
-const authRouter = require('./routers/auth-router')
-const { rawListeners, allowedNodeEnvironmentFlags } = require('process')
-const { Console } = require('console')
-const { resolve } = require('path')
+const express = require('express');
+const expressHandlebars = require('express-handlebars');
+const sqlite3 = require('sqlite3');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const SQLiteStore = require('connect-sqlite3')(session);
+const dummyData = require('./dummy-data.js');
+const db = require('./database.js');
+const authRouter = require('./routers/auth-router');
+const menuRouter = require('./routers/menu-router')
+const { rawListeners, allowedNodeEnvironmentFlags } = require('process');
+const { Console } = require('console');
+const { resolve } = require('path');
 
 const app = express()
 
@@ -22,11 +23,18 @@ app.use(session({
     store: new SQLiteStore({db: "session-db.db"}),
     saveUninitialized: false,
     resave: false,
-    secret: 'qopwepkma'
+    secret: 'qo11231pwepkma',
+    cookie: {
+        maxAge: 1000*60*60*24
+    }
 }))
+app.use(cookieParser())
 
 app.use(function(request, response, next) {
+    //console.log("test")
+    //console.log(request.session.loggedIn)
     response.locals.session = request.session
+
     next()
 })
 
@@ -52,141 +60,60 @@ const hbs = expressHandlebars.create({
 app.engine("hbs", hbs.engine)
 
 app.use('/auth', authRouter)
+app.use('/menu', menuRouter)
 
-app.get('/', function(request, response){ 
-    let restArray = []
-    db.fetchTenRestaurants(function(error, restaurants) {
-        restaurants.forEach((r) => {
-            restArray.push(r)
-            db.fetchCategoriesByRID(r.id, function(error, categories) {
-                categories.forEach((c) => {
-                    db.fetchItemsByCID(c.id, function(error, items) {
-                        c.items = items;
-                    })
-                })
-                r.categories = categories
-
-            })
-            
-        })
+app.get('/', function(request, response){
+    //REWORKED AND FINISHED WITH ERROR HANDLING
+    db.getTenRestaurants().then(function(rests) {
+        //console.log(rests)
         const model = {
-            restaurants: restArray
+            restaurants: rests
         }
         response.render('menus.hbs', model)
-    })
-})
-
-app.get('/getAll', function(request, response) {
-    db.all("SELECT * FROM items WHERE categoryId = ?", [2], function(error, rows) {
-        for(var i = 0; i < rows.length; i++){
-            console.log(rows[i])
-        }
+    }).catch(function(error) {
+        console.log("Error caught in db.getTenRestaurants(): " , error)
+        response.sendStatus('500')
     })
 })
 
 app.get('/restaurant/:id', function(request, response){
-    const id = request.params.id
-    db.fetchRestaurantById(id, function(error, restaurant) {
-        db.fetchCategoriesByRID(id, function(error, categories) {
-            const promises = []
-            categories.forEach((c) => {
-                c.items = new Promise((resolve, reject) => {
-                    db.fetchItemsByCID(c.id, function(error, items) {
-                        //console.log('items: ', items)
-                        //c.items = items;
-                        //console.log('c.items : ', c.items)
-                        if(error){
-                            reject(error)
-                        } else {
-                            resolve(items)
-                        }
-                    })
-                }).then((items) => {
-                    c.items = items
+    //REWORKED AND FINISHED WITH ERROR HANDLING
+    const errors = []
+    if(isNaN(request.params.id)){
+        errors.push('The id you are trying to find is not in a correct format.')
+        const model = { errors }
+        response.render('menu.hbs', model)
+    } else {
+        const id = request.params.id;
+        let isEditor = false;
+        if(request.session.userId && request.session.accessLevel){
+            if(request.session.accessLevel > 4){
+                isEditor = true;
+            } else {
+                db.getCanEdit(id, request.session.userId).then(function(canEdit) {
+                    isEditor = canEdit
+                }).catch(function(error) {
+                    if(error){
+                        isEditor = false;
+                    }
                 })
-                promises.push(c.items)
-            })
-            Promise.all(promises).then(function(results) {
-                restaurant.categories = categories
-                //console.log(restaurant.categories[0].items)
-                const model = {
-                    name: restaurant.name,
-                    desc: restaurant.desc,
-                    rating: restaurant.rating,
-                    categories: restaurant.categories
-                }
-                response.render('menu.hbs', model)
-            })
-            //console.log(categories)
-
-        })
-        //console.log(restaurant)
-        
-    })
-    /*
-    getRestaurantById(id).then(function(r) {
-        if(r.rating){
-            rest = new Restaurant(r.id, r.name, r.desc, r.rating)
-        } else {
-            rest = new Restaurant(r.id, r.name, r.desc)
+            }
         }
-        return new Promise(function(resolve, reject) {
-            rest.getMyCategories().then(function(cats) {
-                if(cats){
-                    for(var i = 0; i < cats.length; i++){
-                        let tempCat = new Category(cats[i].id, cats[i].name, cats[i].desc, cats[i].restaurantId)
-                        rest.pushCategory(tempCat)
-                    }
-                    resolve(rest)
-                } else {
-                    resolve()
-                }
-            })
-        })
-    }).then(function(r){
-        return Promise.all(r.categories.map(function(cat) {
-            return cat.getMyItems().then(function(items) {
-                if(items){
-                    for(var i = 0; i < items.length; i++){
-                        let tempI = new Item(items[i].name, items[i].desc, items[i].price, items[i].categoryId)
-                        cat.pushItem(tempI);
-                    }
-                }
-            })
-        })).then(function(data) {
-            console.log("R IS : " , r);
-            rest = r;
-        })
-    }).then(function(data2) {
-        if(rest) {
+        db.getRestaurantById(id).then(function(restaurant) {
             const model = {
-                name: rest.name,
-                desc: rest.desc,
-                rating: rest.rating,
-                categories: rest.categories
+                id: restaurant.id,
+                name: restaurant.name,
+                desc: restaurant.desc,
+                rating: restaurant.rating,
+                categories: restaurant.categories,
+                canEdit: isEditor
             }
             response.render('menu.hbs', model)
-        }
-    }) */
-    /*
-    Restaurant.RestaurantById(id).then((result) => {
-        console.log("RESULT IS NOW __ ", result);
-        if(Array.isArray(result)){
-            console.log("isanarray")
-        } else {
-            console.log("isnotanarray")
-        }
-        const model = {
-            name: result.name,
-            desc: result.desc,
-            rating: result.rating,
-            categories: result.categories
-        }
-        response.render('menu.hbs', model)
-    }).catch((error) => {
-        console.log("DID NOT FIND ID: " , id, "; error: " , error);
-        response.sendStatus(404);
-    }) */
+        }).catch(function(error) {
+            console.log("Error caugth in db.getRestaurantByID(): " , error)
+            response.sendStatus('500')    
+        })
+    }
 })
 
 app.get('/create', function(request, response) {
@@ -237,7 +164,7 @@ app.post('/created', function(request, response) {
     //console.log("Session Restaurant id: " , session.restaurantObject)
     //response.redirect('')
 })
-
+/*
 app.get('/edit/:id',function(request, response) {
     const id = request.params.id
     session.editingId = id
@@ -278,7 +205,9 @@ app.get('/edit/:id',function(request, response) {
         //console.log(restaurant)
         
     })
-})
+}) 
+app.get('/edit')
+*/
 
 app.get('/add-category', function(request, response) {
     console.log("GET /add-category")

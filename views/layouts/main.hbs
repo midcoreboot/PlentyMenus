@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <meta name="viewport" content="width-device-width, initial-scale=1.0">
         <meta charset="UTF-8">
+
         <title>Plenty Menus</title>
         <link rel="stylesheet" href="/css/spectre.min.css">
         <link rel="stylesheet" href="/css/spectre-exp.min.css">
@@ -12,14 +13,21 @@
     </head>
     <body>
         <header class="navbar p-2 myNav">
-            <section class="navbar-section">
-                <a href="/" class="navHead navbar-brand mr-2 text-bold">Plenty Menus</a>
+            <section class="navbar-section" aria-labelledby="brandTitle">
+                <a href="/" class="navHead navbar-brand mr-2 text-bold" id="brandTitle">Plenty Menus</a>
                 <div class="divider-vert"></div>
                 <a href="/aboutus" class="btn btn-link">About us</a>
-                <a href="/create" class="btn btn-link">Create menu</a>
+                
+                {{#if session.loggedIn}}
+                    <a href="/menu/create/restaurant" class="btn btn-link">Create menu</a>
+                {{/if}}
             </section>
             <section class="navbar-section">
-                <a href="/login" class="btn btn-link" style="float: right;">Log in</a>
+                {{#if session.loggedIn}}
+                    <a href="/auth/logout" class="btn btn-link" style="float: right;">Log out</a>
+                {{else}}
+                    <a href="/auth/login" class="btn btn-link" style="float: right;">Log in</a>
+                {{/if}}
             </section>
         </header>
         {{{body}}}
