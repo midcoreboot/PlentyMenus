@@ -33,6 +33,10 @@ app.use(cookieParser())
 app.use(function(request, response, next) {
     //console.log("test")
     //console.log(request.session.loggedIn)
+    
+    if(!request.session.loggedIn){
+        request.session.loggedIn = false;
+    }
     response.locals.session = request.session
 
     next()
