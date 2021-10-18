@@ -17,7 +17,7 @@ fs.access(path, fs.F_OK, (err) => {
 })
 
 const db = new sqlite.Database('database.db', (error) => {
-    console.log("ssss")
+    //console.log("ssss")
     db.get('PRAGMA foreign_keys = ON')
     if(error != null){
         //database exists exist

@@ -33,10 +33,6 @@ app.use(cookieParser())
 app.use(function(request, response, next) {
     //console.log("test")
     //console.log(request.session.loggedIn)
-    
-    if(!request.session.loggedIn){
-        request.session.loggedIn = false;
-    }
     response.locals.session = request.session
 
     next()
@@ -80,6 +76,10 @@ app.get('/', function(request, response){
     })
 })
 
+app.get('/aboutus', function(request, response) {
+    response.render('aboutus.hbs')
+})
+
 app.get('/restaurant/:id', function(request, response){
     //REWORKED AND FINISHED WITH ERROR HANDLING
     const errors = []
@@ -120,113 +120,6 @@ app.get('/restaurant/:id', function(request, response){
     }
 })
 
-app.get('/create', function(request, response) {
-    if(session.isCreatingMenu == true && session.editingId) {
-        console.log("COOOKIE INITIATED")
-        console.log("editingid: " , session.editingId)
-    } else {
-        console.log("COOKIE DOESNT EXIST");
-        console.log("editingid: " , session.editingId)
-        session.isCreatingMenu = true;
-        response.render('create.hbs')
-    }
-})
-
-app.post('/created', function(request, response) {
-    console.log("rName: ", request.body.rName);
-    console.log("rDesc: ", request.body.rDesc);
-    //VALIDATE DATA.
-/*
-    let restaurant = Restaurant.createRestaurant(request.body.rName, request.body.rDesc); */
-    promiseRestaurant(request.body.rName, request.body.rDesc, 50).then(function(id) {
-        //console.log("THIS ID IS CURRENTLY " + id)
-        //session.editingId = id;
-        //response.redirect('/create')
-        Restaurant.RestaurantById(id).then((result) => {
-            //console.log("RESULT IS NOW __ ", result);
-            if(Array.isArray(result)){
-                //console.log("isanarray")
-            } else {
-                //console.log("isnotanarray")
-            }
-            const model = {
-                name: result.name,
-                desc: result.desc,
-                rating: result.rating,
-                categories: result.categories
-            }
-            console.log("FULL MODEL FOR edit.hbs : " , model)
-            response.render('edit.hbs', model)
-        }).catch((error) => {
-            console.log("DID NOT FIND ID: " , session.editingId, "; error: " , error);
-            response.sendStatus(404);
-        })    
-        
-    })
-    //console.log("Restauranta id: " , restaurant);
-    //session.restaurantObject = restaurant;
-    //console.log("Session Restaurant id: " , session.restaurantObject)
-    //response.redirect('')
-})
-/*
-app.get('/edit/:id',function(request, response) {
-    const id = request.params.id
-    session.editingId = id
-    db.fetchRestaurantById(id, function(error, restaurant) {
-        db.fetchCategoriesByRID(id, function(error, categories) {
-            const promises = []
-            categories.forEach((c) => {
-                c.items = new Promise((resolve, reject) => {
-                    db.fetchItemsByCID(c.id, function(error, items) {
-                        //console.log('items: ', items)
-                        //c.items = items;
-                        //console.log('c.items : ', c.items)
-                        if(error){
-                            reject(error)
-                        } else {
-                            resolve(items)
-                        }
-                    })
-                }).then((items) => {
-                    c.items = items
-                })
-                promises.push(c.items)
-            })
-            Promise.all(promises).then(function(results) {
-                restaurant.categories = categories
-                console.log(restaurant.categories[0].items)
-                const model = {
-                    name: restaurant.name,
-                    desc: restaurant.desc,
-                    rating: restaurant.rating,
-                    categories: restaurant.categories
-                }
-                response.render('edit.hbs', model)
-            })
-            //console.log(categories)
-
-        })
-        //console.log(restaurant)
-        
-    })
-}) 
-app.get('/edit')
-*/
-
-app.get('/add-category', function(request, response) {
-    console.log("GET /add-category")
-    response.render('createCategory.hbs')
-})
-
-app.post('/add-category', function(request, response) {
-    insertCategory(request.body.categoryName, request.body.categoryDesc, session.editingId).then((cId) => {
-        response.redirect('/edit/' + session.editingId);
-    })
-})
-
-app.get('/seteditingid/:id', function(request, response) {
-    session.editingId = request.params.id;
-})
 
 app.get('/additemto/:id', function(request, response) {
     let categoryId = parseInt(request.params.id) // NEEDS TO BE ESCAPED
@@ -254,9 +147,6 @@ app.post('/createitem', function(request, response) {
     }
 })
 
-app.post('/login', function(request, response) {
-
-})
 
 
 function promiseRestaurant(name, desc, rating){

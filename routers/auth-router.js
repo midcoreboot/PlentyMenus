@@ -17,23 +17,23 @@ router.post('/login', function(request, response) {
     let username = request.body.username;
     db.getUserByUsername(username, function(error, user) {
         if(error || user === undefined){
-            console.log("couldnt fetch user.")
+            //console.log("couldnt fetch user.")
             response.redirect('back')
         } else {
             bcrypt.compare(password, user.hash, function(error, result) {
                 if(result == true) {
-                    console.log("CORRECT PASSWORD");
+                    //console.log("CORRECT PASSWORD");
                    // response.redirect('back')
                     //CREATE COOKIES
                     request.session.loggedIn = true
                     request.session.userId = user.id
                     request.session.accessLevel = user.accessLevel
-                    console.log(request.body.referer)
+                    //console.log(request.body.referer)
                     response.redirect(request.body.referer)
                 } else {
                     //SEND MSG
                     //WRONG PASS
-                    console.log("Wrong password")
+                    //console.log("Wrong password")
                     response.redirect('back')
                 }
             });
@@ -90,7 +90,7 @@ router.post('/register', function(request, response) {
                                 } else {
                                     //USER CREATED
                                     //LOGIN
-                                    console.log("USER CREATED: ", username, fullname, hash)
+                                    //console.log("USER CREATED: ", username, fullname, hash)
                                     response.redirect('/')
                                 }
                             })

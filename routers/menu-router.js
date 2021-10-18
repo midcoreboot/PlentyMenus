@@ -38,7 +38,7 @@ router.get('/:id', function(request, response){
                     }
                     response.render('menu.hbs', model)
                 }).catch(function(error) {
-                    console.log("Error caugth in db.getRestaurantByID(): " , error)
+                    //console.log("Error caugth in db.getRestaurantByID(): " , error)
                     response.sendStatus('500')    
                 })
             })
@@ -54,7 +54,7 @@ router.get('/:id', function(request, response){
                 }
                 response.render('menu.hbs', model)
             }).catch(function(error) {
-                console.log("Error caugth in db.getRestaurantByID(): " , error)
+                //console.log("Error caugth in db.getRestaurantByID(): " , error)
                 response.sendStatus('500')    
             })
         }
@@ -91,10 +91,10 @@ router.get('/edit/:id', function(request, response) {
                         categories: restaurant.categories,
                         canEdit: isEditor
                     }
-                    console.log("id: ", model.id)
+                    //console.log("id: ", model.id)
                     response.render('edit.hbs', model)
                 }).catch(function(error) {
-                    console.log("Error caugth in db.getRestaurantByID(): " , error)
+                    //console.log("Error caugth in db.getRestaurantByID(): " , error)
                     response.sendStatus('500')    
                 })
             })
@@ -387,10 +387,10 @@ router.post('/category/:cId/create/item', function(request, response) {
                         response.render('createItem.hbs', model)
                     } else {               
                         db.createItem(name, desc, price, cid, function(error){
-                            console.log("cid: ",cid)
+                            //console.log("cid: ",cid)
                             if(error){
-                                console.log(error)
-                                errors.push("Could not update restaurant...", error)
+                                //console.log(error)
+                                errors.push("Could not update restaurant...")
                                 const model = { errors }
                                 response.render('createItem.hbs', model)
                             } else {
