@@ -405,5 +405,83 @@ router.post('/category/:cId/create/item', function(request, response) {
         })
     }
 })
+
+router.post('/delete/restaurant', function(request, response) {
+    if(request.session.loggedIn == true & request.body.rId){
+        const rid = request.body.rId
+        db.canEdit(request.session.accessLevel, rid, request.session.userId, function(err, userCanEdit) {
+            if(err){
+                response.render('500.hbs')
+            } else {
+                if(userCanEdit == true){
+                    db.deleteRestaurant(rId, function(error) {
+                        if(error){
+                            const model = {
+                                answer: "Could not delete restaurant",
+                                error
+                            }
+                            response.render('delete.hbs', model)
+                        } else {
+                            response.redirect('/menu/edit/'+rid)
+                        }
+                    })
+                }
+            }
+        })
+    }
+})
+
+router.post('/delete/category', function(request, response) {
+    if(request.session.loggedIn == true & request.session.editingId){
+        const rid = request.session.editingId
+        db.canEdit(request.session.accessLevel, rid, request.session.userId, function(err, userCanEdit) {
+            if(err){
+                response.render('500.hbs')
+            } else {
+                if(userCanEdit == true){
+                    var cid = request.body.catId
+                    db.deleteCategory(cid, function(error) {
+                        if(error){
+                            const model = {
+                                answer: "Could not delete category",
+                                error
+                            }
+                            response.render('delete.hbs', model)
+                        } else {
+                            response.redirect('/menu/edit/'+rid)
+                        }
+                    })
+                }
+            }
+        })
+    }
+})
+
+router.post('/delete/item', function(request, response) {
+    if(request.session.loggedIn == true & request.session.editingId){
+        const rid = request.session.editingId
+        db.canEdit(request.session.accessLevel, rid, request.session.userId, function(err, userCanEdit) {
+            if(err){
+                response.render('500.hbs')
+            } else {
+                if(userCanEdit == true){
+                    var id = request.body.itemId
+                    db.deleteItem(id, function(error){
+                        if(error){
+                            const model = {
+                                answer: "Item couldn't be deleted."
+                            }
+                            response.render('delete.hbs', model)
+                        } else {
+                            response.redirect('/menu/edit/'+rid)
+                        }
+                    })
+                }
+            }
+        })
+    }
+})
+
+
 // DO POST
 module.exports = router

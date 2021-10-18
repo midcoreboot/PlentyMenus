@@ -24,21 +24,22 @@
             {{#each categories}}
                 <div class="col-5 col-sm-12 col-mx-auto bg-dark menuCat">
                     <div class="catTitle text-center tooltip p-1" data-tooltip="{{this.desc}}">
-                        <a href="/menu/edit/{{../id}}/category/{{this.id}}" class="btn btn-action bg-dark s-circle btn-large mr-2">
+                        <form method="POST" action="/menu/delete/category" style="display:inline-block;"><input type="hidden" name="catId" value="{{this.id}}"><button type="submit" class="btn btn-action bg-dark s-circle btn-large mr-2 tooltip" data-tooltip="Delete this category"><i class="icon icon-delete"></i></button></form>
+                        <a href="/menu/edit/{{../id}}/category/{{this.id}}" class="btn btn-action bg-dark s-circle btn-large mr-2 tooltip tooltip-bottom" data-tooltip="Edit this category">
                             <i class="icon icon-edit"></i>
                         </a>
                         {{this.name}}
                         <small class="label label-rounded" style="font-size: 0.7rem;">
-                            <a href="/menu/category/{{this.id}}/create/item">Add item to category{{this.id}}.</a>
+                            <a href="/menu/category/{{this.id}}/create/item">Add item to category.</a>
                         </small>
                         <div class="divider"></div>
                     </div>
                     {{#each this.items}}
                     <dl class="p-1">
-                        <dt class="itemTitle">{{this.name}} <div style="float:right;">{{this.price}}:-</div>
-                        <a href="/menu/edit/{{../../id}}/item/{{this.id}}" class="btn btn-action bg-dark s-circle btn-large mr-2">
+                        <dt class="itemTitle">{{this.name}}<div style="float:right;">{{this.price}}:-</div>
+                        <a href="/menu/edit/{{../../id}}/item/{{this.id}}" class="btn btn-action bg-dark s-circle btn-large mr-2 tooltip" data-tooltip="Edit this item">
                             <i class="icon icon-edit"></i>
-                        </a>
+                        </a><form method="POST" action="/menu/delete/item" style="display:inline-block;"><input type="hidden" name="itemId" value="{{this.id}}"><button type="submit" class="btn btn-action bg-dark s-circle btn-large mr-2 tooltip" data-tooltip="Delete this item"><i class="icon icon-delete"></i></button></form>
                         </dt>
                         <dd class="p-2">{{this.desc}}</dd>
                     </dl>

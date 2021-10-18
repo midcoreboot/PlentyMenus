@@ -40,8 +40,8 @@ const db = new sqlite.Database('database.db', (error) => {
 function createTables(){
     const sql0 = "PRAGMA foreign_keys = ON";
     const sql1 = "CREATE TABLE IF NOT EXISTS restaurants (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, desc TEXT, rating INTEGER, isVisible BOOLEAN NOT NULL CHECK (isVisible IN (0,1)))";
-    const sql2 = "CREATE TABLE IF NOT EXISTS categories (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, desc TEXT, restaurantId INTEGER, FOREIGN KEY(restaurantId) REFERENCES restaurants(id))";
-    const sql3 = "CREATE TABLE IF NOT EXISTS items (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, desc TEXT, price INTEGER, categoryId INTEGER, FOREIGN KEY(categoryId) REFERENCES categories(id))";
+    const sql2 = "CREATE TABLE IF NOT EXISTS categories (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, desc TEXT, restaurantId INTEGER, FOREIGN KEY(restaurantId) REFERENCES restaurants(id) ON DELETE CASCADE)";
+    const sql3 = "CREATE TABLE IF NOT EXISTS items (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, desc TEXT, price INTEGER, categoryId INTEGER, FOREIGN KEY(categoryId) REFERENCES categories(id) ON DELETE CASCADE)";
     const sql4 = "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL UNIQUE, fullname TEXT, hash TEXT, accessLevel INTEGER DEFAULT 0)";
     const sqlFinal = "CREATE TABLE IF NOT EXISTS RestaurantsEditors (id INTEGER PRIMARY KEY AUTOINCREMENT, restaurantId INTEGER, userId INTEGER, FOREIGN KEY(restaurantId) REFERENCES restaurants(id), FOREIGN KEY(userId) REFERENCES users(id))";
     db.serialize(function() {
@@ -262,9 +262,9 @@ exports.getTenRestaurants = async function() {
             throw new Error(error)
         }
 }
-function promiseTenRestaurants() {
+function promiseTenRestaurants(count) {
     return new Promise(function(resolve, reject) {
-        const query = "SELECT * FROM restaurants ORDER BY id ASC LIMIT 10";
+        const query = "SELECT * FROM restaurants ORDER BY id ASC";
         db.all(query, function(error, restaurants) {
             if(error){
                 reject(error)
@@ -356,6 +356,27 @@ exports.createItem = function(name, desc, price, cId, callback) {
     console.log(name, desc, price, cId)
     db.run(sql, [name, desc, price, cId], function(error) {
         callback(error)
+    })
+}
+
+exports.deleteRestaurant = function(resId, callback) {
+    const sql = "DELETE FROM restaurants WHERE id = ?"
+    db.run(sql, [resId], function(err) {
+        callback(err)
+    })
+}
+
+exports.deleteCategory = function(catId, callback) {
+    const sql = "DELETE FROM categories WHERE id = ?"
+    db.run(sql, [catId], function(err) {
+        callback(err)
+    })
+}
+
+exports.deleteItem = function(itemId, callback) {
+    const sql = "DELETE FROM items WHERE id = ?"
+    db.run(sql, [itemId], function(err){
+        callback(err)
     })
 }
 
