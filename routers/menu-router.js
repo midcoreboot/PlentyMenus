@@ -458,13 +458,15 @@ router.post('/delete/category', function(request, response) {
 })
 
 router.post('/delete/item', function(request, response) {
+    console.log("Test")
     if(request.session.loggedIn == true & request.session.editingId){
         const rid = request.session.editingId
+        console.log("test")
         db.canEdit(request.session.accessLevel, rid, request.session.userId, function(err, userCanEdit) {
             if(err){
                 response.render('500.hbs')
             } else {
-                if(userCanEdit == true){
+                if(userCanEdit == true && request.body.itemId){
                     var id = request.body.itemId
                     db.deleteItem(id, function(error){
                         if(error){

@@ -1,17 +1,18 @@
 <!-- REDO -->
-
-<h1>Login</h1>
-<form action="/auth/login" method="post">
-	
-	<div>
-		Username: <input type="text" name="username">
-	</div>
-	
-	<div>
-		Password: <input type="password" name="password">
-	</div>
-	
-	<input type="hidden" name="referer" value={{referer}}>
-	<input type="submit" value="Login!">
-	
-</form>
+<div class="container bg-dark col-6 col-mx-auto">
+<h1 class="text-center">Login</h1>
+	<form action="/auth/login" class="col-9 col-mx-auto" method="post" >
+		
+		<div>
+			Username: <input type="text" name="username">
+		</div>
+		
+		<div>
+			Password: <input type="password" name="password">
+		</div>
+		
+		<input type="hidden" name="referer" value={{referer}}>
+		<input type="submit" value="Login!">
+		
+	</form>
+</div>

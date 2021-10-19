@@ -31,8 +31,6 @@ app.use(session({
 app.use(cookieParser())
 
 app.use(function(request, response, next) {
-    //console.log("test")
-    //console.log(request.session.loggedIn)
     response.locals.session = request.session
 
     next()
