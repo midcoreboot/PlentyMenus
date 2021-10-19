@@ -1,20 +1,65 @@
+@font-face {
+    font-family: mohave;
+    src: url('/fonts/Mohave-Regular.otf');
+}
+
+
 .myNav {
     box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
 }
 
+.introduction {
+    margin-bottom: 1.0rem;
+}
+.introCont {
+    height: 250px;
+}
 .navHead {
     font-size: 25px !important;
+}
+
+.introTextbox {
+    color: #fff;
+    font-size: 18px;
+}
+.catTile {
+    padding-bottom: 1.5em!important;
+}
+.catDesc {
+    text-align: center;
+}
+
+.bigIntroText {
+    font-size: 42px;
+    text-align: center;
 }
 
 .menus {
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     margin-bottom: 30px;
-}
-.menusHead {
-    font-size: 24px !important;
-    text-align: center;
+    color: #000;
+    height: 450px;
 }
 
+.heroPic {
+    padding: 0;
+}
+
+.menusHead {
+    font-size: 45px !important;
+    text-align: center;
+    font-family: mohave;
+    letter-spacing: 1.5px;
+}
+.menusDesc {
+    text-align: center;
+    color: black;
+}
+.myDivider {
+    margin-left: 10px;
+    margin-right: 10px;
+    border-top: 0.05rem solid rgba(100,100,100,0.5) !important; 
+}
 .category {
     background-color: #ebebeb;
 }
@@ -109,4 +154,13 @@
 
 .createItemLabel {
     margin-right: 0.5em;
+}
+
+@media screen and (max-width: 840px){
+    .menus {
+        height: 500px;
+    }
+    .restaurantPics {
+        display: none;
+    }
 }

@@ -47,9 +47,7 @@ router.post('/login', function(request, response) {
     })
 })
 router.post('/logout', function(request, response) {
-    console.log("test1")
     if(request.session.loggedIn == true) {
-        console.log("test2")
         request.session.loggedIn = false
         request.session.destroy(function(err) {
             if(err){
@@ -60,7 +58,7 @@ router.post('/logout', function(request, response) {
             }
         })
     } else {
-        response.redirect('')
+        response.redirect('/')
     }
 })
 

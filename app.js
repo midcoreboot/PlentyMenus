@@ -31,8 +31,6 @@ app.use(session({
 app.use(cookieParser())
 
 app.use(function(request, response, next) {
-    console.log(request.headers.referer)
-    //response.locals.ref = request.headers.referer
     response.locals.session = request.session
     next()
 })

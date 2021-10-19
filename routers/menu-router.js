@@ -277,6 +277,7 @@ router.post('/edit/:rId/item/:id', function(request, response) {
     }
 })
 
+
 router.get('/create/restaurant', function(request, response) {
     if(request.session.loggedIn == true){
         response.render('createRestaurant.hbs')
