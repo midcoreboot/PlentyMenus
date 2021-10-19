@@ -10,7 +10,11 @@ const saltRounds = 10;
 
 
 router.get('/login', function(request, response) {
-    response.render('login.hbs', {referer: request.headers.referer})
+    if(request.session.loggedIn == true){
+        response.redirect('/')
+    } else { 
+        response.render('login.hbs', {referer: request.headers.referer})
+    }
 })
 router.post('/login', function(request, response) {
     let password = request.body.password;
@@ -29,7 +33,7 @@ router.post('/login', function(request, response) {
                     request.session.userId = user.id
                     request.session.accessLevel = user.accessLevel
                     //console.log(request.body.referer)
-                    response.redirect(request.body.referer)
+                    response.redirect('back')
                 } else {
                     //SEND MSG
                     //WRONG PASS
@@ -42,19 +46,21 @@ router.post('/login', function(request, response) {
         
     })
 })
-router.get('/logout', function(request, response) {
+router.post('/logout', function(request, response) {
+    console.log("test1")
     if(request.session.loggedIn == true) {
+        console.log("test2")
         request.session.loggedIn = false
         request.session.destroy(function(err) {
             if(err){
-                response.sendStatus('500')
+                console.log(err)
+                response.sendStatus('500.hbs')
             } else {
-                
                 response.redirect('back')
             }
         })
     } else {
-        response.redirect('back')
+        response.redirect('')
     }
 })
 
@@ -105,5 +111,9 @@ router.post('/register', function(request, response) {
         }
         response.render('register.hbs', model)
     }
+})
+
+router.get('/myid', function(request, response) {
+    response.send(request.session.loggedIn)
 })
 module.exports = router

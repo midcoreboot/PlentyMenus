@@ -262,6 +262,8 @@ exports.getTenRestaurants = async function() {
             throw new Error(error)
         }
 }
+
+
 function promiseTenRestaurants(count) {
     return new Promise(function(resolve, reject) {
         const query = "SELECT * FROM restaurants ORDER BY id ASC";

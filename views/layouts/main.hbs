@@ -9,7 +9,7 @@
         <link rel="stylesheet" href="/css/spectre-exp.min.css">
         <link rel="stylesheet" href="/css/spectre-icons.min.css">
         <link rel="stylesheet" href="/css/main.css">
-
+        
     </head>
     <body>
         <header class="navbar p-2 myNav">
@@ -24,7 +24,10 @@
             </section>
             <section class="navbar-section">
                 {{#if session.loggedIn}}
-                    <a href="/auth/logout" class="btn btn-link" style="float: right;">Log out</a>
+                    <form method="POST" action="/auth/logout" style="display:inline-block;">
+                        <input type="hidden" name="refUrl" value="{{ref}}">
+                        <button type="submit" class="btn btn-link">Log out</button>
+                    </form>
                 {{else}}
                     <a href="/auth/login" class="btn btn-link" style="float: right;">Log in</a>
                 {{/if}}

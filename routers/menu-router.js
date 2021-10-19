@@ -20,13 +20,6 @@ router.get('/:id', function(request, response){
     } else {
         const id = request.params.id;
         if(request.session.loggedIn == true){
-            db.canEdit(request.session.accessLevel, id, request.session.userId, function(error, bEdit) {
-                if(error){
-                    var isEditor = false
-                } else {
-                    var isEditor = bEdit;
-                }
-                
                 db.getRestaurantById(id).then(function(restaurant) {
                     const model = {
                         id: restaurant.id,
@@ -34,14 +27,14 @@ router.get('/:id', function(request, response){
                         desc: restaurant.desc,
                         rating: restaurant.rating,
                         categories: restaurant.categories,
-                        canEdit: isEditor
+                        canEdit: true
                     }
                     response.render('menu.hbs', model)
                 }).catch(function(error) {
                     //console.log("Error caugth in db.getRestaurantByID(): " , error)
                     response.sendStatus('500')    
                 })
-            })
+            //})
         } else {
             db.getRestaurantById(id).then(function(restaurant) {
                 const model = {
@@ -71,35 +64,23 @@ router.get('/edit/:id', function(request, response) {
         response.render('404.hbs')
     } else {
         const id = request.params.id;
-        if(request.session.loggedIn == true){
-            db.canEdit(request.session.accessLevel, id, request.session.userId, function(error, bEdit) {
-                if(error) {
-                    var isEditor = false;
-                } else {
-                   var isEditor = bEdit
+        if(request.session.loggedIn == true){    
+            request.session.editingId = id
+            db.getRestaurantById(id).then(function(restaurant) {
+                const model = {
+                    id,
+                    name: restaurant.name,
+                    desc: restaurant.desc,
+                    rating: restaurant.rating,
+                    categories: restaurant.categories,
+                    canEdit: true
                 }
-                
-                if(isEditor = true){
-                    request.session.editingId = id
-                }
-                db.getRestaurantById(id).then(function(restaurant) {
-                    const model = {
-                        id,
-                        name: restaurant.name,
-                        desc: restaurant.desc,
-                        rating: restaurant.rating,
-                        categories: restaurant.categories,
-                        canEdit: isEditor
-                    }
-                    //console.log("id: ", model.id)
-                    response.render('edit.hbs', model)
-                }).catch(function(error) {
-                    //console.log("Error caugth in db.getRestaurantByID(): " , error)
-                    response.sendStatus('500')    
-                })
+                response.render('edit.hbs', model)
+            }).catch(function(error) {
+                response.sendStatus('500')    
             })
         } else {
-            response.redirect('../auth/login')
+            response.redirect('../../auth/login')
         }
         
     }
@@ -128,6 +109,30 @@ router.post('/edit/restaurant/:id', function(request, response) {
         errors.push("The restaurantid is not in a correct format.")
     } else {
         const id = request.params.id
+        if(request.session.loggedIn == true){
+            let name = request.body.restaurantName
+            let desc = request.body.restaurantDesc
+            const id = request.params.id
+            const errors = validate.getRestaurantErrors(name, desc)
+            if(errors.length > 0) {
+                const model = {errors, id}
+                response.render('editRestaurant.hbs', model)
+            } else {               
+                db.updateRestaurant(id, name, desc, function(error){
+                    if(error){
+                        errors.push("Could not update restaurant...")
+                        const model = { errors }
+                        response.render('editRestaurant.hbs', model)
+                    } else {
+                        response.redirect('/menu/edit/'+id)
+                    }
+                })
+            }
+        } else {
+            const errors = []
+            errors.push('You do not have access to this edit this resource')
+            response.render('editRestaurant.hbs', model)
+        } /*
         db.canEdit(request.session.accessLevel,id, request.session.userId, function(err, userCanEdit) {
             if(err){
                 response.render('500.hbs')
@@ -155,8 +160,8 @@ router.post('/edit/restaurant/:id', function(request, response) {
                     response.redirect('/edit/'+id)
                 }
             }
-        })
-    }
+        }) */
+    } 
 })
 
 router.get('/edit/:rId/category/:id', function(request, response) {
