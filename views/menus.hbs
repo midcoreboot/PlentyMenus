@@ -11,12 +11,18 @@
                 </div>
                 <div class="column col-4 col-mx-auto introTextbox">
                     <div class="bigIntroText text-bold">Plenty Menus</div>
-                    <div class="text-center" pt-2>Plenty menus is a service for the people, ensuring a smooth experience while finding your local restaurants menu.</div> 
+                    <div class="text-center" pt-2>Plenty menus is a service for the people, ensuring a smooth experience while finding your local restaurant's menu.</div> 
                 </div>
         </div>
     </div>
 </div>
-
+{{#if errors}}
+    {{#each errors}}
+        <div class="toast toast-dark mb-1 menusErrors p-centered">
+            {{this}}
+        </div>
+    {{/each}}
+{{else}}
 <div class="container pt-2">
     <div class="columns">
         {{#each restaurants}}
@@ -53,3 +59,4 @@
         {{/each}}
     </div>
 </div>
+{{/if}}

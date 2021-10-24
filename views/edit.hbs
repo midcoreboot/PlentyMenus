@@ -4,49 +4,61 @@
             {{this}}
         </div>
     {{/each}}
-
 {{else}}
 <div class="container bg-primary mt-2">
-        <div class="menuTitle text-center text-strong tooltip tooltip-bottom" data-tooltip="{{desc}}">
-            <a href="/menu/edit/restaurant/{{id}}" class="btn btn-action bg-dark s-circle btn-large mr-2">
-                <i class="icon icon-edit"></i>
-            </a>{{name}}<small class="label label-rounded ml-1 text-small">{{rating}}/100</small>
+    <div class="menuTitle text-center text-strong tooltip tooltip-bottom" data-tooltip="{{desc}}">
+        <a href="/menu/edit/restaurant/{{id}}" class="btn btn-action bg-dark s-circle btn-large mr-2">
+            <i class="icon icon-edit"></i>
+        </a>
+        <form method="POST" action="/menu/api/delete/restaurant" style="display:inline-block;">
+            <input type="hidden" name="restaurantId" value="{{this.id}}">
+            <button type="submit" class="btn btn-action bg-dark s-circle btn-large mr-2 tooltip" data-tooltip="Delete this restaurant">
+                <i class="icon icon-delete"></i>
+            </button>
+        </form>
+        {{name}}
+        <small class="label label-rounded ml-1 text-small">{{rating}}/100</small>
+    </div>
+    <div class="menuBody columns">
+        <div class="col-12">
+        <a href="/menu/{{id}}/create/category" class="btn btn-secondary addCat">Add Category</a>
         </div>
-        <!--
-        <div class="h1 menuTitle text-large text-center">
-            {{name}}
-        </div> -->
-        
-        <div class="menuBody columns">
-            <div class="col-12">
-                <a href="/menu/{{id}}/create/category" class="btn btn-secondary addCat">Add Category</a>
-            </div>
-            {{#each categories}}
-                <div class="col-5 col-sm-12 col-mx-auto bg-dark menuCat">
-                    <div class="catTitle text-center tooltip p-1" data-tooltip="{{this.desc}}">
-                        <form method="POST" action="/menu/delete/category" style="display:inline-block;"><input type="hidden" name="catId" value="{{this.id}}"><button type="submit" class="btn btn-action bg-dark s-circle btn-large mr-2 tooltip" data-tooltip="Delete this category"><i class="icon icon-delete"></i></button></form>
-                        <a href="/menu/edit/{{../id}}/category/{{this.id}}" class="btn btn-action bg-dark s-circle btn-large mr-2 tooltip tooltip-bottom" data-tooltip="Edit this category">
-                            <i class="icon icon-edit"></i>
-                        </a>
-                        {{this.name}}
-                        <small class="label label-rounded" style="font-size: 0.7rem;">
-                            <a href="/menu/category/{{this.id}}/create/item">Add item to category.</a>
-                        </small>
-                        <div class="divider"></div>
-                    </div>
-                    {{#each this.items}}
-                    <dl class="p-1">
-                        <dt class="itemTitle">{{this.name}}<div style="float:right;">{{this.price}}:-</div>
+        {{#each categories}}
+            <div class="col-5 col-sm-12 col-mx-auto bg-dark menuCat">
+                <div class="catTitle text-center tooltip p-1" data-tooltip="{{this.desc}}">
+                    <form method="POST" action="/menu/api/delete/category" style="display:inline-block;">
+                        <input type="hidden" name="categoryId" value="{{this.id}}">
+                        <button type="submit" class="btn btn-action bg-dark s-circle btn-large mr-2 tooltip" data-tooltip="Delete this category">
+                            <i class="icon icon-delete"></i>
+                        </button>
+                    </form>
+                    <a href="/menu/edit/{{../id}}/category/{{this.id}}" class="btn btn-action bg-dark s-circle btn-large mr-2 tooltip tooltip-bottom" data-tooltip="Edit this category">
+                        <i class="icon icon-edit"></i>
+                    </a>
+                    {{this.name}}
+                    <small class="label label-rounded" style="font-size: 0.7rem;">
+                        <a href="/menu/category/{{this.id}}/create/item">Add item to category.</a>
+                    </small>
+                    <div class="divider"></div>
+                </div>
+                {{#each this.items}}
+                <dl class="p-1">
+                    <dt class="itemTitle">{{this.name}}<div style="float:right;">{{this.price}}:-</div>
                         <a href="/menu/edit/{{../../id}}/item/{{this.id}}" class="btn btn-action bg-dark s-circle btn-large mr-2 tooltip" data-tooltip="Edit this item">
                             <i class="icon icon-edit"></i>
-                        </a><form method="POST" action="/menu/delete/item" style="display:inline-block;"><input type="hidden" name="itemId" value="{{this.id}}"><button type="submit" class="btn btn-action bg-dark s-circle btn-large mr-2 tooltip" data-tooltip="Delete this item"><i class="icon icon-delete"></i></button></form>
-                        </dt>
-                        <dd class="p-2">{{this.desc}}</dd>
-                    </dl>
-                    {{/each}}
-                </div>
-            {{/each}}
-            
-        </div>
+                        </a>
+                        <form method="POST" action="/menu/api/delete/item" style="display:inline-block;">
+                            <input type="hidden" name="itemId" value="{{this.id}}">
+                            <button type="submit" class="btn btn-action bg-dark s-circle btn-large mr-2 tooltip" data-tooltip="Delete this item">
+                                <i class="icon icon-delete"></i>
+                            </button>
+                        </form>
+                    </dt>
+                    <dd class="p-2">{{this.desc}}</dd>
+                </dl>
+                {{/each}}
+            </div>
+        {{/each}}          
+    </div>
 </div>
 {{/if}}

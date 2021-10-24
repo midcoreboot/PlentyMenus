@@ -25,9 +25,11 @@
             </div>
             <div class="col-9 col-sm-12">
                 <input class="form-input" type="text" id="categoryDesc" name="categoryDesc" placeholder="category description">
+                
             </div>
         </div>
         <input type="submit" id="" value="Submit edit!" class="createItemBtn btn btn-primary">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
     </form>
     </div>
 </div>

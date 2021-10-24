@@ -1,4 +1,12 @@
-<!-- REDO -->
+
+{{#if errors}}
+    {{#each errors}}
+        <div class="toast toast-dark mb-1">
+            {{this}}
+        </div>
+    {{/each}}
+{{/if}}
+
 <div class="container bg-dark col-6 col-mx-auto">
 <h1 class="text-center">Login</h1>
 	<form action="/auth/login" class="col-9 col-mx-auto" method="post" >
@@ -11,7 +19,6 @@
 			Password: <input type="password" name="password">
 		</div>
 		
-		<input type="hidden" name="referer" value={{referer}}>
 		<input type="submit" value="Login!">
 		
 	</form>

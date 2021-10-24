@@ -1,1 +1,11 @@
-<h1 class="title">{{answer}}</h1>
+{{#if question}}
+    <form method="POST" action="/menu/delete/{{type}}">
+        Are you sure you want to delete this?
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        <input value="Yes!" type="submit">
+    </form>
+{{else}}
+<div class="toast toast-dark mb-1 " style="font-size: 25px;">
+    {{answer}}
+</div>
+{{/if}}

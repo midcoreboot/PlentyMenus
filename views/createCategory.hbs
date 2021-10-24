@@ -27,7 +27,8 @@
                 <input class="form-input" type="text" id="categoryDesc" name="categoryDesc" placeholder="category description">
             </div>
         </div>
-        <input type="submit" id="" value="Submit edit!" class="createItemBtn btn btn-primary">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        <input type="submit"  value="Submit edit!" class="createItemBtn btn btn-primary">
     </form>
     </div>
 </div>

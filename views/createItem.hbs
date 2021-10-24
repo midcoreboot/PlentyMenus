@@ -1,14 +1,6 @@
 <div class="modal modal-md active">
   <a href="/menu/edit/{{rId}}" class="modal-overlay" aria-label="Close"></a>
   <div class="modal-container createItemModal text-center text-bold">
-    <!-- modal structure here -->
-    {{#if errors}}
-        {{#each errors}}
-            <div class="toast toast-dark mb-1">
-                {{this}}
-            </div>
-        {{/each}}
-    {{/if}}
     <div class="createItemTitle bg-primary">Create item: </div>
     <form class="form-horizontal createItemForm"  method="POST" action="/menu/category/{{cId}}/create/item">
         <div class="form-group">
@@ -36,6 +28,7 @@
             </div>
         </div>
         <input type="submit" id="" value="Submit edit!" class="createItemBtn btn btn-primary">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
     </form>
     </div>
 </div>
